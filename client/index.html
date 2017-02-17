@@ -4,10 +4,15 @@
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
     <script type="text/babel" >
         "use strict";
-    
+        let ctx;
+        const init = () => {
+            const canvas = document.querySelector("#canvas");
+            ctx = canvas.getContext("2d");
+        };
     </script>
 </head>
 <body>
+    <canvas id="canvas"></canvas>
 
 </body>
 </html>
