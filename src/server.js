@@ -23,6 +23,11 @@ const onJoin = (sock) => {
 
   socket.on('join', () => {
     socket.join('room1');
+
+    socket.on('draw', (data) => {
+      data.coords.color = "red";
+      socket.broadcast.to('room1').emit('clientDraw', data);
+    });
   });
 };
 
@@ -30,5 +35,4 @@ io.sockets.on('connection', (socket) => {
   console.log('started');
   onJoin(socket);
 });
-
 console.log('Websocket server started');

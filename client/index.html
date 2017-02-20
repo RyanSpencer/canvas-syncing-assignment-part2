@@ -1,18 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style type="text/css">
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/babel" >
         "use strict";
         let ctx;
+        let socket;
+        let draws = {};
+
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let keys = Object.keys(draws);
+            
+            for(let i = 0; i < keys.length; i++) {
+                const drawCall = draws[keys[i]];
+                ctx.fillStyle = drawCall.color;
+                ctx.fillRect(drawCall.x, drawCall.y, drawCall.width, drawCall.height);
+          }
+        };
+
+        const setCalls = (x, y) => {
+            let time = new Date().getTime();
+            let coords = {x: x - 50, y: y - 50, width: 100, height: 100, color: "black"};
+            
+            draws[time] = coords;
+
+            socket.emit('draw', {time: time, coords: coords});
+            handleMessage({time: time, coords: coords}); 
+        };
+        
+        const handleMessage = (data) => {
+            draws[data.time] = data.coords;
+            draw();
+        };
+        const doMouseup = (e) => {
+            console.log('Mouse released');
+            setCalls(e.pageX, e.pageY);
+        };
         const init = () => {
             const canvas = document.querySelector("#canvas");
-            ctx = canvas.getContext("2d");
+            ctx = canvas.getContext('2d');
+            
+            socket = io.connect();
+            
+            socket.on('connect', () => {
+                console.log('connecting');
+                socket.emit('join', {});
+            });
+            
+            socket.on('clientDraw', (data) => {
+                handleMessage(data); 
+            });
+            canvas.onmouseup = doMouseup;
         };
+
+        window.onload = init;
     </script>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-
+    <canvas id="canvas" width="640" height= "480"></canvas>
 </body>
 </html>
