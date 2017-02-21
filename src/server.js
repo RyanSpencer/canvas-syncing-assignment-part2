@@ -25,8 +25,9 @@ const onJoin = (sock) => {
     socket.join('room1');
 
     socket.on('draw', (data) => {
-      data.coords.color = "red";
-      socket.broadcast.to('room1').emit('clientDraw', data);
+      const newData = data;
+      newData.coords.color = 'red';
+      socket.broadcast.to('room1').emit('clientDraw', newData);
     });
   });
 };
