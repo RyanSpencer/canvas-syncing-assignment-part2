@@ -59,6 +59,10 @@
                 handleMessage(data); 
             });
             canvas.onmouseup = doMouseup;
+            document.querySelector("#clear").onclick = () => {
+                  ctx.clearRect(0, 0, canvas.width, canvas.height);
+                  draws = {};
+            };
         };
 
         window.onload = init;
@@ -66,5 +70,6 @@
 </head>
 <body>
     <canvas id="canvas" width="640" height= "480"></canvas>
+    <button id="clear">Clear</button>
 </body>
 </html>
